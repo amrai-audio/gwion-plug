@@ -12,9 +12,8 @@ all: i2c.checklib
 
 include ../config_post.mk
 
-
 get-i2c:
-        git clone https://github.com/amaork/libi2c
+	git clone https://github.com/amaork/libi2c
 	${MAKE} make-i2c
 
 make-i2c:

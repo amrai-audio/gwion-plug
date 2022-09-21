@@ -119,13 +119,9 @@ static DTOR(gw_i2c_dtor) {
 }
 
 static MFUN(gw_i2c_ctor) {
-  int bus_num = (int)*(m_int*)MEM(SZ_INT);
+  const M_Object bus_name = *(M_Object*)MEM(SZ_INT);
   int bus;
-  char bus_name[32];
-  memset(bus_name, 0, sizeof(bus_name));
-  if (snprintf(bus_name, sizeof(bus_name), "/dev/i2c-%u", bus_num) < 0)
-    return handle(shred, "I2CNameError");
-  if ((bus = i2c_open(bus_name)) == -1)
+  if ((bus = i2c_open(STRING(bus_name))) == -1)
     return handle(shred, "I2CBusError");
   I2CDevice *dev = GW_I2CDevice(o);
   i2c_init_device(dev); // optimize call out
@@ -195,59 +191,76 @@ GWION_IMPORT(I2C) {
   const Type t_I2CDevice = gwi_class_ini(gwi, "I2C", "Object");
   t_I2CDevice->nspc->offset += sizeof(I2CDevice);
   CHECK_BB(gwi_func_ini(gwi, "void", "bus"));
-  CHECK_BB(gwi_func_arg(gwi, "int", "bus"));
+    CHECK_BB(gwi_func_arg(gwi, "int", "bus"));
   CHECK_BB(gwi_func_end(gwi, gw_I2CDevice_bus_set, ae_flag_none));
+
   CHECK_BB(gwi_func_ini(gwi, "int", "bus"));
   CHECK_BB(gwi_func_end(gwi, gw_I2CDevice_bus_get, ae_flag_none));
+
   CHECK_BB(gwi_func_ini(gwi, "void", "addr"));
-  CHECK_BB(gwi_func_arg(gwi, "int", "addr"));
+    CHECK_BB(gwi_func_arg(gwi, "int", "addr"));
   CHECK_BB(gwi_func_end(gwi, gw_I2CDevice_addr_set, ae_flag_none));
+
   CHECK_BB(gwi_func_ini(gwi, "int", "addr"));
   CHECK_BB(gwi_func_end(gwi, gw_I2CDevice_addr_get, ae_flag_none));
+
   CHECK_BB(gwi_func_ini(gwi, "void", "addr_tenbit"));
-  CHECK_BB(gwi_func_arg(gwi, "int", "tenbit"));
+    CHECK_BB(gwi_func_arg(gwi, "int", "tenbit"));
   CHECK_BB(gwi_func_end(gwi, gw_I2CDevice_tenbit_set, ae_flag_none));
+
   CHECK_BB(gwi_func_ini(gwi, "int", "addr_tenbit"));
   CHECK_BB(gwi_func_end(gwi, gw_I2CDevice_tenbit_get, ae_flag_none));
+
   CHECK_BB(gwi_func_ini(gwi, "void", "delay"));
-  CHECK_BB(gwi_func_arg(gwi, "int", "delay"));
+    CHECK_BB(gwi_func_arg(gwi, "int", "delay"));
   CHECK_BB(gwi_func_end(gwi, gw_I2CDevice_delay_set, ae_flag_none));
+
   CHECK_BB(gwi_func_ini(gwi, "int", "delay"));
   CHECK_BB(gwi_func_end(gwi, gw_I2CDevice_delay_get, ae_flag_none));
+
   CHECK_BB(gwi_func_ini(gwi, "void", "flags"));
-  CHECK_BB(gwi_func_arg(gwi, "int", "flags"));
+    CHECK_BB(gwi_func_arg(gwi, "int", "flags"));
   CHECK_BB(gwi_func_end(gwi, gw_I2CDevice_flags_set, ae_flag_none));
+
   CHECK_BB(gwi_func_ini(gwi, "int", "flags"));
   CHECK_BB(gwi_func_end(gwi, gw_I2CDevice_flags_get, ae_flag_none));
+
   CHECK_BB(gwi_func_ini(gwi, "void", "page_bytes"));
-  CHECK_BB(gwi_func_arg(gwi, "int", "page_bytes"));
+    CHECK_BB(gwi_func_arg(gwi, "int", "page_bytes"));
   CHECK_BB(gwi_func_end(gwi, gw_I2CDevice_page_bytes_set, ae_flag_none));
+
   CHECK_BB(gwi_func_ini(gwi, "int", "page_bytes"));
   CHECK_BB(gwi_func_end(gwi, gw_I2CDevice_page_bytes_get, ae_flag_none));
+
   CHECK_BB(gwi_func_ini(gwi, "void", "iaddr_bytes"));
-  CHECK_BB(gwi_func_arg(gwi, "int", "iaddr_bytes"));
+      CHECK_BB(gwi_func_arg(gwi, "int", "iaddr_bytes"));
   CHECK_BB(gwi_func_end(gwi, gw_I2CDevice_iaddr_bytes_set, ae_flag_none));
+
   CHECK_BB(gwi_func_ini(gwi, "int", "iaddr_bytes"));
   CHECK_BB(gwi_func_end(gwi, gw_I2CDevice_iaddr_bytes_get, ae_flag_none));
+
   CHECK_BB(gwi_func_ini(gwi, "auto", "new"));
-  CHECK_BB(gwi_func_arg(gwi, "int", "bus"));
-  CHECK_BB(gwi_func_arg(gwi, "int", "addr"));
-  CHECK_BB(gwi_func_arg(gwi, "int", "iaddr_bytes"));
-  CHECK_BB(gwi_func_arg(gwi, "int", "page_bytes"));
+    CHECK_BB(gwi_func_arg(gwi, "string", "bus"));
+    CHECK_BB(gwi_func_arg(gwi, "int", "addr"));
+    CHECK_BB(gwi_func_arg(gwi, "int", "iaddr_bytes"));
+    CHECK_BB(gwi_func_arg(gwi, "int", "page_bytes"));
   CHECK_BB(gwi_func_end(gwi, gw_i2c_ctor, ae_flag_none));
+
 //  CHECK_BB(gwi_func_ini(gwi, "string", "get_device_desc"));
 //  CHECK_BB(gwi_func_arg(gwi, "string", "buf"));
 //  CHECK_BB(gwi_func_arg(gwi, "int", "size"));
 //  CHECK_BB(gwi_func_end(gwi, gw_i2c_get_device_desc, ae_flag_none));
+
   CHECK_BB(gwi_func_ini(gwi, "int", "read"));
-  CHECK_BB(gwi_func_arg(gwi, "int", "iaddr"));
-  CHECK_BB(gwi_func_arg(gwi, "u8[]", "buf"));
-  CHECK_BB(gwi_func_arg(gwi, "int", "len"));
+    CHECK_BB(gwi_func_arg(gwi, "int", "iaddr"));
+    CHECK_BB(gwi_func_arg(gwi, "u8[]", "buf"));
+    CHECK_BB(gwi_func_arg(gwi, "int", "len"));
   CHECK_BB(gwi_func_end(gwi, gw_i2c_read, ae_flag_none));
+
   CHECK_BB(gwi_func_ini(gwi, "int", "write"));
-  CHECK_BB(gwi_func_arg(gwi, "int", "iaddr"));
-  CHECK_BB(gwi_func_arg(gwi, "u8[]", "buf"));
-  CHECK_BB(gwi_func_arg(gwi, "int", "len"));
+    CHECK_BB(gwi_func_arg(gwi, "int", "iaddr"));
+    CHECK_BB(gwi_func_arg(gwi, "u8[]", "buf"));
+    CHECK_BB(gwi_func_arg(gwi, "int", "len"));
   CHECK_BB(gwi_func_end(gwi, gw_i2c_write, ae_flag_none));
 /*
   CHECK_BB(gwi_func_ini(gwi, "int", "select"));
